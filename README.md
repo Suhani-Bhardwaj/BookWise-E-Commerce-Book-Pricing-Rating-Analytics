@@ -1,0 +1,2 @@
+# BookWise — E-Commerce Book Pricing & Rating Analytics
+BookWise is an end-to-end e-commerce data analytics and machine learning project that analyzes an online bookstore catalog to understand book pricing, ratings, categories, inventory availability, and product characteristics.  The project follows a complete analytics workflow starting from web data collection and continuing through data cleaning, feature engineering, SQL analysis, exploratory data analysis, machine learning-based product segmentation, and interactive Power BI visualization.
