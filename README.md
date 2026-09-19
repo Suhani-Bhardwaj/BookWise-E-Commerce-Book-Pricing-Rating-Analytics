@@ -55,7 +55,7 @@ https://books.toscrape.com/
 
 The dataset represents a snapshot of the book catalog available on the website at the time of data collection. It is not historical sales data.
 
-🕷️ 1. Web Data Acquisition
+1. Web Data Acquisition
 
 Python was used to collect book information programmatically.
 
@@ -90,7 +90,7 @@ Tax
 Number Available
 Number of Reviews
 Stock Quantity
-🧹 2. Data Cleaning & Preprocessing
+2. Data Cleaning & Preprocessing
 
 The raw scraped data was cleaned and transformed into an analysis-ready dataset using Pandas and NumPy.
 
@@ -112,7 +112,7 @@ The final cleaned dataset contains:
 
 with no duplicate records and no missing values after preprocessing.
 
-⚙️ 3. Feature Engineering
+3. Feature Engineering
 
 Additional analytical features were created from the cleaned data.
 
@@ -147,7 +147,7 @@ Description Word Count
 
 These features were later used for exploratory analysis and machine-learning segmentation.
 
-🗄️ 4. SQL Data Analysis
+4. SQL Data Analysis
 
 The cleaned dataset was imported into MySQL for structured business analysis.
 
@@ -190,7 +190,7 @@ The SQL queries are available in:
 
 sql/SQL_data_analysis.sql
 
-📊 5. Exploratory Data Analysis
+5. Exploratory Data Analysis
 
 Exploratory Data Analysis was performed using Python visualization libraries.
 
@@ -220,7 +220,7 @@ Price distribution by price band
 Stock quantity by rating category
 Top 10 most expensive books
 Outliers
-🤖 6. Machine Learning — Book Segmentation
+6. Machine Learning — Book Segmentation
 
 The machine-learning component uses K-Means clustering, an unsupervised machine-learning algorithm.
 
