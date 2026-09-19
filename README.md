@@ -1,431 +1,622 @@
 # 📚 BookWise — E-Commerce Book Pricing & Rating Analytics
 
-BookWise is an end-to-end e-commerce data analytics and machine learning project that analyzes an online bookstore catalog to understand book pricing, ratings, categories, inventory availability, and product characteristics.
-
-The project follows a complete analytics workflow starting from web data collection and continuing through data cleaning, feature engineering, SQL analysis, exploratory data analysis, machine learning-based product segmentation, and interactive Power BI visualization.
-
----
-
 ## 📌 Project Overview
 
-The objective of BookWise is to transform raw web-scraped bookstore data into meaningful business insights.
+**BookWise** is an end-to-end e-commerce book analytics project that analyzes book pricing, ratings, availability, inventory, categories, and product content.
 
-The project focuses on questions such as:
+The project follows a complete data analytics workflow, starting from web data collection and continuing through data cleaning, feature engineering, SQL analysis, exploratory data analysis, machine learning, book segmentation, and Power BI visualization.
 
-- How are book prices distributed?
-- How are ratings distributed?
-- Which categories contain the most books?
-- What proportion of books are low, medium, or high stock?
-- How do price and ratings vary across categories?
-- Which books are among the most expensive?
-- Are there natural groups of books with similar characteristics?
-- Which book segments require different types of business attention?
+### 🔄 Project Workflow
+
+**Web Scraping → Data Cleaning → Feature Engineering → SQL Analysis → Exploratory Data Analysis → Machine Learning → Book Segmentation → Business Insights → Power BI Dashboard**
 
 ---
 
-## 🔄 Project Workflow
+## 🎯 Project Objectives
 
-```text
-Books to Scrape
-       ↓
-Web Scraping
-       ↓
-Raw Dataset
-       ↓
-Data Cleaning & Preprocessing
-       ↓
-Feature Engineering
-       ↓
-      ┌───────────────┬────────────────┐
-      ↓               ↓                ↓
-   SQL Analysis       EDA         Machine Learning
-      ↓               ↓                ↓
-      └───────────────┴────────────────┘
-                       ↓
-                Business Insights
-                       ↓
-                  Power BI
+The main objectives of this project are to:
+
+- Collect book catalog data from an online bookstore.
+- Clean and preprocess the scraped data.
+- Analyze book prices, ratings, stock levels, and categories.
+- Identify patterns and relationships between book attributes.
+- Perform structured business analysis using SQL.
+- Explore the dataset through statistical and visual analysis.
+- Segment books using K-Means clustering.
+- Understand the characteristics of different book segments.
+- Create an interactive Power BI dashboard.
 
 ---
 
-🌐 Data Source
+# 🌐 Data Source
 
-The data was collected from Books to Scrape, a publicly accessible website designed for web-scraping practice.
+The data was collected from **Books to Scrape**, a website created for practicing web scraping.
 
-Source:
+**Source:** https://books.toscrape.com/
 
-https://books.toscrape.com/
+The website contains **50 catalog pages with 20 books per page**. The project collected **1,000 book records** and then visited individual product pages to enrich the dataset with additional information.
 
-The dataset represents a snapshot of the book catalog available on the website at the time of data collection. It is not historical sales data.
+---
 
-1. Web Data Acquisition
+# 🕷️ 1. Web Data Acquisition
 
-Python was used to collect book information programmatically.
+The first stage of the project was collecting book information through web scraping.
 
-Tools Used
-Python
-Requests
-BeautifulSoup
-Pandas
-Data Collection Process
+### 🛠️ Libraries Used
 
-The scraping process was performed in two stages:
+- Python
+- Requests
+- BeautifulSoup
+- Pandas
 
-Book-level information was collected from the catalog/listing pages.
-Individual product pages were visited to enrich each book record with additional information.
-
-The catalog contained 50 pages with approximately 20 books per page, resulting in a final dataset of 1,000 book records.
-
-Information Collected
+### 📊 Information Collected
 
 The scraped data includes:
 
-Book Title
-Price
-Rating
-Availability
-Product URL
-Category
-Description
-UPC
-Product Type
-Tax
-Number Available
-Number of Reviews
-Stock Quantity
-2. Data Cleaning & Preprocessing
+- Book Title
+- Price
+- Rating
+- Availability
+- Category
+- Description
+- Product URL
+- UPC
+- Product Type
+- Tax
+- Stock Quantity
+- Number of Reviews
 
-The raw scraped data was cleaned and transformed into an analysis-ready dataset using Pandas and NumPy.
+The initial scraped dataset was saved as:
 
-Main preprocessing steps
-Checked for missing values
-Checked for duplicate records
-Corrected text encoding issues
-Converted price and tax values into numerical formats
-Converted ratings from text into numerical values
-Extracted stock quantity from availability information
-Standardized text fields
-Handled missing product descriptions
-Validated categorical variables
-Retained source-provided unclassified categories without making unsupported assumptions
+`data/rawbook.csv`
+
+The enriched dataset containing additional product-page information was saved as:
+
+`data/enriched_raw_books.csv`
+
+---
+
+# 🧹 2. Data Cleaning & Preprocessing
+
+The raw scraped data required preprocessing before it could be used for analysis.
+
+### 🔍 Cleaning Steps
+
+- Checked for missing values.
+- Checked for duplicate records.
+- Corrected text encoding issues.
+- Converted price and tax values into numeric format.
+- Converted book ratings into numeric values.
+- Extracted stock quantity from availability information.
+- Standardized data types.
+- Cleaned text-based fields.
+- Created additional analytical features.
+- Validated the final dataset.
+
+### 📊 Final Cleaned Dataset
 
 The final cleaned dataset contains:
 
-1,000 records and 19 features
+- **1,000 books**
+- **19 features**
+- **No duplicate records**
+- **No missing values**
 
-with no duplicate records and no missing values after preprocessing.
+The cleaned dataset was saved as:
 
-3. Feature Engineering
+`data/cleaned_books.csv`
 
-Additional analytical features were created from the cleaned data.
+### 📌 Category Validation
 
-Rating Category
+During data validation, **67 records contained `"Add a comment"` as the category value**. These values were retained rather than manually assigning categories that were not provided by the source.
 
-Ratings were grouped into:
+---
 
-Low
-Average
-High
-Price Band
+# ⚙️ 3. Feature Engineering
 
-Books were grouped into:
+Additional features were created to make the dataset more useful for analysis.
 
-Budget
-Mid-Range
-Premium
-Stock Status
+### Rating Category
 
-Inventory was classified into:
+Books were grouped into rating categories based on their numerical ratings.
 
-Low Stock
-Medium Stock
-High Stock
-Text-Based Features
+### Price Band
 
-The following features were created:
+Books were grouped into different price ranges to make pricing patterns easier to analyze.
 
-Title Length
-Description Length
-Description Word Count
+### Stock Status
 
-These features were later used for exploratory analysis and machine-learning segmentation.
+Books were categorized based on their available stock quantity.
 
-4. SQL Data Analysis
+### Title Length
 
-The cleaned dataset was imported into MySQL for structured business analysis.
+The number of characters in each book title.
 
-SQL Concepts Used
-SELECT
-WHERE
-ORDER BY
-LIMIT
-COUNT
-SUM
-AVG
-MIN
-MAX
-GROUP BY
-HAVING
-CASE statements
-Subqueries
-Common Table Expressions (CTEs)
-Window Functions
-RANK()
-ROW_NUMBER()
-DENSE_RANK()
-AVG() OVER()
-Joins
-Analysis Areas
+### Description Length
 
-The SQL analysis focused on:
+The number of characters in each book description.
 
-Book pricing
-Ratings
-Categories
-Inventory levels
-Price bands
-Stock status
-Category-level comparisons
-High-value and low-stock books
-Ranking and comparative analysis
+### Description Word Count
 
-The SQL queries are available in:
+The number of words contained in each book description.
 
-sql/SQL_data_analysis.sql
+### Review Activity
 
-5. Exploratory Data Analysis
+A `Review_Activity` feature was initially explored. However, it was not retained because the available review information did not provide meaningful variation for analysis.
 
-Exploratory Data Analysis was performed using Python visualization libraries.
+---
 
-Libraries Used
-Matplotlib
-Seaborn
-Pandas
+# 🗄️ 4. SQL Data Analysis
 
-A total of 19 visualizations were created to investigate:
+SQL was used to perform structured analysis on the cleaned BookWise dataset.
 
-Price distribution
-Rating distribution
-Price bands
-Rating categories
-Stock status
-Category distribution
-Price vs. rating
-Average price by category
-Average rating by category
-Average stock by category
-Average stock by price band
-Average stock by rating
-Average price by rating category
-Average price by stock status
-Stock quantity distribution
-Price distribution by price band
-Stock quantity by rating category
-Top 10 most expensive books
-Outliers
-6. Machine Learning — Book Segmentation
+The project uses **MySQL**.
 
-The machine-learning component uses K-Means clustering, an unsupervised machine-learning algorithm.
+### 🔎 SQL Concepts Used
 
-Why Clustering?
+The SQL analysis includes:
 
-The dataset does not contain a reliable supervised target variable for a meaningful prediction problem.
+- Filtering
+- Aggregation
+- `GROUP BY`
+- `ORDER BY`
+- Conditional logic
+- `CASE` statements
+- Aggregate functions
+- Subqueries
+- Joins
+- Analytical/window functions
 
-Therefore, instead of predicting an outcome, K-Means was used to identify natural groups of books with similar characteristics.
+### 📌 Business Questions Explored
 
-Features Used
+The SQL analysis examines questions such as:
 
-Six numerical features were selected:
+- How do book prices vary across categories?
+- Which categories have higher average prices?
+- How do ratings vary across categories?
+- How does stock quantity vary across different price bands?
+- How does inventory vary across rating categories?
+- Which books are among the most expensive?
+- How do different book attributes vary across the catalog?
 
-Price
-Rating
-Stock Quantity
-Title Length
-Description Length
-Description Word Count
+SQL files are available in:
 
-Derived categorical variables such as Price Band, Rating Category, and Stock Status were excluded from clustering because they are derived from the original numerical variables.
+`SQL/`
 
-📏 Feature Scaling
+---
+
+# 📊 5. Exploratory Data Analysis
+
+Exploratory Data Analysis was performed using:
+
+- Pandas
+- Matplotlib
+- Seaborn
+
+The project includes visual analysis of:
+
+- Price distribution
+- Rating distribution
+- Price band distribution
+- Rating category distribution
+- Stock status distribution
+- Category distribution
+- Price vs Rating
+- Average price by category
+- Average rating by category
+- Average stock by price band
+- Average stock by rating
+- Average price by rating category
+- Average price by stock status
+- Average stock by category
+- Average rating by price band
+- Stock quantity distribution
+- Price distribution by price band
+- Stock quantity by rating category
+- Top 10 most expensive books
+
+These visualizations help identify pricing, rating, inventory, and category-level patterns.
+
+The `charts/` folder contains the EDA visualizations along with the machine-learning and clustering visualizations.
+
+---
+
+# 🤖 6. Machine Learning — Book Segmentation
+
+The machine-learning stage focuses primarily on **unsupervised learning using K-Means clustering**.
+
+### ❓ Why K-Means Clustering?
+
+The dataset does not contain a reliable supervised target variable for predicting a meaningful business outcome.
+
+Therefore, instead of predicting a predefined target, K-Means was used to discover naturally occurring groups of books with similar characteristics.
+
+The objective was to answer:
+
+> **Which books have similar characteristics and can be grouped together?**
+
+This provides an additional perspective for catalog and inventory analysis.
+
+---
+
+# 📌 7. Features Used for Clustering
+
+The K-Means model uses six numerical features:
+
+- `Price`
+- `Rating`
+- `Stock_Quantity`
+- `Title_Length`
+- `Description_Length`
+- `Description_Word_Count`
+
+Derived categorical features such as:
+
+- `Price_Band`
+- `Rating_Category`
+- `Stock_Status`
+
+were excluded from clustering to avoid using variables directly derived from the selected numerical features.
+
+---
+
+# 📏 8. Feature Scaling
 
 The selected features have different numerical ranges.
 
-For example, rating ranges from 1–5, while description length can contain thousands of characters.
+For example:
 
-Therefore, StandardScaler was used before applying K-Means so that features with larger numerical scales would not dominate the distance calculations.
+- Rating has a relatively small numerical range.
+- Price has a larger range.
+- Stock quantity can vary considerably.
+- Description length can contain hundreds of characters.
 
-🔢 Selecting the Number of Clusters
+Therefore, **StandardScaler** was used before applying K-Means.
 
-Different values of K from 2 to 10 were evaluated using:
+This puts the selected numerical features on a comparable scale so that larger-valued features do not dominate the clustering process.
 
-Elbow Method
-Silhouette Score
-Davies-Bouldin Index
-Calinski-Harabasz Score
+---
 
-The highest numerical Silhouette Score occurred at K=2. However, K=3 was selected for the final segmentation because it provided a more useful level of business differentiation while maintaining a reasonable clustering structure.
+# 🔢 9. Selecting the Number of Clusters
 
-🎯 Final Book Segments
+Multiple values of K were evaluated from **2 to 10**.
 
-The final K-Means model produced three segments:
+The following methods were used:
 
-Cluster 0 — High-Stock Books
+- Elbow Method
+- Silhouette Score
+- Davies-Bouldin Index
+- Calinski-Harabasz Index
+- Cluster stability analysis using Adjusted Rand Index
 
-Books with relatively higher inventory levels and comparatively shorter content descriptions.
+The Elbow Method did not show one sharply defined elbow, while **K=2 produced the highest numerical Silhouette Score**.
 
-Cluster 1 — Low-Stock Books
+However, **K=3 was selected for the final segmentation because it provided more useful business differentiation for the book catalog while still producing a meaningful clustering structure.**
 
-Books with relatively lower inventory levels and comparatively shorter content descriptions.
+---
 
-Cluster 2 — Detailed-Content Books
+# 📚 10. Final Book Segments
 
-Books characterized by substantially longer titles and descriptions, with moderate inventory levels.
+The final K-Means model contains **three book segments**.
 
-The clusters have relatively similar average prices and ratings, indicating that inventory and content characteristics contribute more strongly to the segmentation than price and rating.
+### 🟢 Cluster 0 — High-Stock Books
 
-🔬 PCA Visualization
+- **352 books**
+- Average stock quantity: approximately **14.74**
+- Relatively higher inventory levels
+- Generally shorter content descriptions
 
-Principal Component Analysis (PCA) was used to reduce the six-dimensional feature space to two principal components for visualization.
+**Potential business use:**
 
-This makes it easier to visually inspect the distribution of the resulting clusters in a two-dimensional plot.
+- Monitor inventory levels.
+- Identify books with relatively high available stock.
+- Compare pricing and ratings within this segment.
 
-PCA was used primarily for visualization; the K-Means model was trained using the standardized six-feature dataset.
+---
 
-💡 Key Insights
+### 🔵 Cluster 1 — Low-Stock Books
 
-Some important findings from the analysis include:
+- **497 books**
+- Average stock quantity: approximately **3.99**
+- Relatively lower inventory levels
+- Generally shorter content descriptions
 
-The final cleaned dataset contains 1,000 books and 19 features.
-The average book price is approximately 35.07.
-The average rating is approximately 2.92 out of 5.
-The average stock quantity is approximately 8.59.
-A large proportion of the catalog falls into the Low Stock category.
-Mid-Range and Premium books represent a large portion of the catalog.
-The clustering analysis indicates that inventory and content characteristics contribute more strongly to the segmentation than price and rating.
-The Low-Stock segment can be useful for identifying books that require closer inventory monitoring.
-The Detailed-Content segment highlights products with substantially longer titles and descriptions.
+**Potential business use:**
 
-These findings describe the scraped catalog and should not be interpreted as sales or demand measurements because the dataset does not contain actual sales information.
+- Monitor inventory more closely.
+- Identify books with relatively low available stock.
+- Compare pricing and ratings within this segment.
 
-📈 Power BI Dashboard
+> **Note:** Low stock does not automatically mean high demand because the dataset does not contain actual sales or customer purchase data.
 
-Microsoft Power BI was used as the business intelligence and visualization layer of the project.
+---
 
-The dashboard presents insights related to:
+### 🟠 Cluster 2 — Detailed-Content Books
 
-Book pricing
-Ratings
-Categories
-Inventory
-Price bands
-Stock status
-Book segments
+- **151 books**
+- Moderate inventory levels
+- Substantially longer titles and descriptions compared with the other clusters
 
-The Power BI file is available in:
+**Potential business use:**
 
-dashboard/dashboard.pbix
+- Analyze product-page content.
+- Compare content characteristics across books.
+- Explore whether detailed product descriptions are associated with different pricing or rating patterns.
 
-🛠️ Technologies Used
-Area	Tools
-Programming	Python
-Web Scraping	Requests, BeautifulSoup
-Data Processing	Pandas, NumPy
-Visualization	Matplotlib, Seaborn
-Database	MySQL
-SQL Analysis	MySQL Workbench
-Machine Learning	Scikit-learn
-Clustering	K-Means
-Scaling	StandardScaler
-Dimensionality Reduction	PCA
-Business Intelligence	Microsoft Power BI
-Development Environment	Jupyter Notebook
-📁 Project Structure
-BookWise-E-Commerce-Book-Pricing-Rating-Analytics/
-│
-├── README.md
-│
-├── data/
-│   ├── rawbook.csv
-│   ├── enriched_raw_books.csv
-│   ├── cleaned_books.csv
-│   └── bookwise_clustered_data.csv
-│
-├── notebooks/
-│   ├── 01_Web_Data_Acquisition.ipynb
-│   ├── 02_Data_Cleaning_Preprocessing.ipynb
-│   ├── 03_SQL_Data_Analysis.ipynb
-│   ├── 04_EDA_Visualization.ipynb
-│   └── 05_Machine_Learning.ipynb
-│
-├── sql/
-│   └── SQL_data_analysis.sql
-│
-├── dashboard/
-│   └── dashboard.pbix
-│
-└── charts/
-    ├── EDA visualizations
-    ├── clustering evaluation charts
-    ├── PCA visualization
-    └── cluster analysis charts
-▶️ How to Run the Project
-1. Clone the repository
-git clone https://github.com/YOUR-USERNAME/BookWise-E-Commerce-Book-Pricing-Rating-Analytics.git
-2. Install the required Python libraries
-pip install pandas numpy requests beautifulsoup4 matplotlib seaborn scikit-learn mysql-connector-python
-3. Run the notebooks in order
-01_Web_Data_Acquisition.ipynb
-        ↓
-02_Data_Cleaning_Preprocessing.ipynb
-        ↓
-03_SQL_Data_Analysis.ipynb
-        ↓
-04_EDA_Visualization.ipynb
-        ↓
-05_Machine_Learning.ipynb
-4. SQL Analysis
+---
 
-Import the cleaned dataset into MySQL and execute:
+# 📌 11. Cluster Characteristics
 
-sql/SQL_data_analysis.sql
+The clustering analysis shows that:
 
-5. Power BI
+- Average prices are relatively similar across the three clusters.
+- Average ratings are also relatively similar across the clusters.
+- Inventory characteristics show stronger differences between clusters.
+- Title and description lengths contribute strongly to the distinction of the Detailed-Content Books segment.
+
+This indicates that the segmentation is driven more by **inventory and content characteristics** than by price and rating alone.
+
+---
+
+# 📉 12. PCA Visualization
+
+**Principal Component Analysis (PCA)** was used to visualize the six-dimensional clustering data in two dimensions.
+
+PCA was used for **visualization purposes**, while K-Means clustering was performed on the standardized six-feature dataset.
+
+The PCA projection provides a visual representation of how the book clusters are distributed.
+
+---
+
+# 🧪 13. Additional Machine Learning Experiments
+
+The machine-learning notebook also explores supervised prediction experiments related to:
+
+- Stock Status
+- Price
+- Rating
+
+These experiments showed limited predictive performance with the available features.
+
+Therefore, the **K-Means clustering approach was retained as the primary machine-learning component** of the project rather than relying on weak prediction results.
+
+---
+
+# 💼 14. Business Insights
+
+The analysis provides several useful observations about the book catalog.
+
+### 📌 Pricing
+
+Book prices vary across the catalog and can be analyzed through price bands and category-level comparisons.
+
+### 📌 Ratings
+
+The dataset contains books across different rating levels, allowing comparisons between ratings, prices, stock levels, and categories.
+
+### 📌 Inventory
+
+Stock quantities vary considerably between books, making inventory-based segmentation useful.
+
+### 📌 Product Content
+
+Book titles and descriptions vary significantly in length.
+
+This creates an opportunity to analyze product-content characteristics alongside pricing and inventory information.
+
+### 📌 Book Segmentation
+
+K-Means clustering identifies three broad groups based on price, rating, stock, and content-related characteristics.
+
+These segments provide an additional analytical view of the catalog and can support further inventory and product-content analysis.
+
+---
+
+# 📊 15. Power BI Dashboard
+
+The cleaned and clustered data was used to create an interactive Power BI dashboard.
+
+The dashboard supports analysis of:
+
+- Book pricing
+- Ratings
+- Stock availability
+- Categories
+- Price bands
+- Rating categories
+- Inventory
+- Cluster distribution
+- Book-level comparisons
+
+Power BI provides an interactive way to explore the analytical results and communicate the findings.
+
+Dashboard file:
+
+`dashboard/dashboard.pbix`
+
+---
+
+# 🛠️ Technologies Used
+
+| Technology | Purpose |
+|---|---|
+| Python | Data collection, cleaning, analysis, and machine learning |
+| Requests | Web requests during data collection |
+| BeautifulSoup | HTML parsing and web scraping |
+| Pandas | Data manipulation and analysis |
+| NumPy | Numerical operations |
+| Matplotlib | Data visualization |
+| Seaborn | Statistical visualization |
+| MySQL | SQL-based data analysis |
+| Scikit-learn | Scaling, clustering, PCA, and evaluation metrics |
+| Jupyter Notebook | Development and analysis environment |
+| Power BI | Interactive dashboard |
+
+---
+
+# 📁 Project Structure
+
+    BookWise-E-Commerce-Book-Pricing-Rating-Analytics/
+    │
+    ├── README.md
+    │
+    ├── data/
+    │   ├── rawbook.csv
+    │   ├── enriched_raw_books.csv
+    │   ├── cleaned_books.csv
+    │   └── bookwise_clustered_data.csv
+    │
+    ├── notebook/
+    │   ├── 01_Web_Data_Acquisition.ipynb
+    │   ├── 02_Data_Cleaning_Preprocessing.ipynb
+    │   ├── 03_SQL_Data_Analysis.ipynb
+    │   ├── 04_EDA_Visualization.ipynb
+    │   └── 05_Machine_Learning.ipynb
+    │
+    ├── SQL/
+    │   └── SQL_data_analysis.sql
+    │
+    ├── dashboard/
+    │   └── dashboard.pbix
+    │
+    └── charts/
+        ├── EDA visualizations
+        ├── clustering visualizations
+        └── machine-learning evaluation charts
+
+---
+
+# ▶️ How to Run the Project
+
+## 1. Clone the Repository
+
+    git clone <your-github-repository-url>
+
+    cd BookWise-E-Commerce-Book-Pricing-Rating-Analytics
+
+## 2. Install Required Libraries
+
+    pip install pandas numpy requests beautifulsoup4 matplotlib seaborn scikit-learn jupyter mysql-connector-python
+
+## 3. Run the Notebooks
+
+Run the notebooks in the following order:
+
+    01_Web_Data_Acquisition.ipynb
+    02_Data_Cleaning_Preprocessing.ipynb
+    03_SQL_Data_Analysis.ipynb
+    04_EDA_Visualization.ipynb
+    05_Machine_Learning.ipynb
+
+## 4. MySQL Configuration
+
+The SQL analysis requires a MySQL database.
+
+Configure your own local MySQL credentials before running the SQL notebook.
+
+**Do not upload real database passwords or credentials to GitHub.**
+
+Use environment variables or another local configuration method for your credentials.
+
+Example:
+
+    DB_HOST=localhost
+    DB_USER=your_username
+    DB_PASSWORD=your_password
+    DB_NAME=bookwise_analytics
+
+## 5. Open the Power BI Dashboard
 
 Open:
 
-dashboard/dashboard.pbix
+    dashboard/dashboard.pbix
 
 using Microsoft Power BI Desktop.
 
-⚠️ Project Limitations
-The dataset is a catalog snapshot rather than historical sales data.
-Actual sales, revenue, profit, and customer purchase data are not available.
-Therefore, the project cannot directly measure demand or sales performance.
-The source website is designed for web-scraping practice and does not represent the full complexity of a commercial bookstore.
-The clustering results are exploratory product segments rather than proven customer or sales segments.
-The dataset contains zero reviews across the 1,000 books, so review activity could not provide meaningful variation.
-🚀 Future Improvements
+---
 
-The project could be extended by adding:
+# ⚠️ Project Limitations
 
-Historical price data
-Historical inventory data
-Actual sales data
-Revenue and profit information
-Customer purchase behavior
-Demand forecasting
-Stock-out prediction
-Product recommendation systems
-Price optimization
-More advanced clustering algorithms
-Time-series analysis
-👩‍💻 Project Author
+- The dataset contains 1,000 books from a web-scraping practice website.
+- The data represents an online product catalog rather than actual transaction history.
+- Actual sales volume and customer purchase behavior are not available.
+- Low stock cannot be directly interpreted as high demand.
+- The clustering results represent statistical similarities between books and should not be treated as confirmed business categories.
+- K=3 was selected using both clustering evaluation and business interpretability rather than simply choosing the K value with the highest Silhouette Score.
+- The dataset represents the catalog at the time of collection and may change over time.
+- Power BI Desktop is required to open the `.pbix` dashboard.
+- Some source-provided category values such as `"Add a comment"` were retained rather than manually assigning categories.
 
-Suhani
+---
 
-Data Analytics | Python | SQL | Power BI | Machine Learning | AI
+# 🚀 Future Improvements
 
-📌 Disclaimer
+The project could be extended with:
 
-This project is created for educational and portfolio purposes using publicly accessible data from Books to Scrape.
-The analysis represents the scraped catalog data and should not be interpreted as actual sales, revenue, or customer behavior data.
+- Real sales and transaction data.
+- Historical price data.
+- Customer purchase behavior.
+- Demand forecasting.
+- Sales prediction using stronger business features.
+- Book recommendation systems.
+- Customer segmentation when customer-level data becomes available.
+- Time-series analysis.
+- Automated data-refresh pipelines.
+- Cloud database integration.
+- A web application for interactive book analytics.
+
+---
+
+# 🔑 Key Takeaways
+
+This project demonstrates an end-to-end data analytics workflow:
+
+**1. Data Collection**  
+Collected book information from an online bookstore using web scraping.
+
+**2. Data Cleaning**  
+Cleaned inconsistent values, corrected data types, handled text issues, and validated the dataset.
+
+**3. Feature Engineering**  
+Created analytical features related to price, rating, inventory, and product content.
+
+**4. SQL Analysis**  
+Used MySQL to perform structured analysis and answer business-oriented questions.
+
+**5. Exploratory Data Analysis**  
+Used visualizations to identify pricing, rating, inventory, and category-level patterns.
+
+**6. Machine Learning**  
+Applied K-Means clustering to identify groups of similar books.
+
+**7. Business Interpretation**  
+Interpreted the resulting book segments from an inventory and product-content perspective.
+
+**8. Dashboard Development**  
+Created a Power BI dashboard to communicate the analytical findings interactively.
+
+---
+
+# 👩‍💻 Author
+
+**Suhani**
+
+Computer Science & Engineering
+
+Interested in:
+
+- Data Analytics
+- Artificial Intelligence
+- Machine Learning
+- Business Intelligence
+- Data-Driven Decision Making
+
+---
+
+# 📄 Disclaimer
+
+This project was created for **educational and portfolio purposes**.
+
+The dataset was collected from **Books to Scrape**, a website intended for web-scraping practice.
+
+The insights presented in this project are based on the available catalog data and should not be treated as actual commercial recommendations without additional real-world business and transaction data.
